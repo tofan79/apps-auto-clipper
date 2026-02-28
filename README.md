@@ -3,7 +3,7 @@
 Desktop-first AI clip generator for turning long-form video into short-form social clips.
 
 ## Status
-- Current stage: Foundation completed (Stage 1)
+- Current stage: Core Backend & DB completed (Stage 2 baseline)
 - Stack: Python services + Node monorepo (pnpm + turbo)
 
 ## Public Blueprint
