@@ -1,0 +1,91 @@
+{
+  "labels": [
+    {
+      "name": "bug",
+      "color": "d73a4a",
+      "description": "Something is not working as intended"
+    },
+    {
+      "name": "enhancement",
+      "color": "a2eeef",
+      "description": "New feature or improvement request"
+    },
+    {
+      "name": "good first issue",
+      "color": "7057ff",
+      "description": "Good starter task for new contributors"
+    },
+    {
+      "name": "help wanted",
+      "color": "008672",
+      "description": "Extra attention from contributors is needed"
+    },
+    {
+      "name": "triage",
+      "color": "fbca04",
+      "description": "Needs review and prioritization"
+    },
+    {
+      "name": "backend",
+      "color": "1d76db",
+      "description": "Backend API and worker related work"
+    },
+    {
+      "name": "database",
+      "color": "5319e7",
+      "description": "Database schema, migration, and ORM work"
+    }
+  ],
+  "issues": [
+    {
+      "title": "Stage 2: Define SQLAlchemy models for User, Job, Clip, Setting",
+      "labels": ["enhancement", "backend", "database", "triage", "help wanted"],
+      "body": "## Goal\nImplement initial SQLAlchemy 2.0 models in `packages/database/models.py`.\n\n## Scope\n- Create `User`, `Job`, `Clip`, and `Setting` tables\n- Define relationship mapping and indexes\n- Align status enum/constraints with Stage 2 plan\n\n## Acceptance Criteria\n- Models import without runtime errors\n- Relationships and constraints are explicit\n- Ready for Alembic autogenerate\n"
+    },
+    {
+      "title": "Stage 2: Add Alembic setup and initial migration",
+      "labels": ["enhancement", "database", "triage", "help wanted"],
+      "body": "## Goal\nInitialize Alembic and create first migration from ORM models.\n\n## Scope\n- Add Alembic config and env\n- Generate initial migration revision\n- Ensure SQLite DB file location matches app data runtime path\n\n## Acceptance Criteria\n- `alembic upgrade head` succeeds\n- Database schema matches models\n- Migration files committed and documented\n"
+    },
+    {
+      "title": "Stage 2: Implement async DB session manager",
+      "labels": ["enhancement", "backend", "database", "triage", "good first issue"],
+      "body": "## Goal\nProvide shared async session helper in `packages/database/session.py`.\n\n## Scope\n- Async engine + session factory\n- Context manager helper (`async with` style)\n- Safe close/rollback handling\n\n## Acceptance Criteria\n- Can be imported by API and worker\n- Handles rollback on exceptions\n- Includes minimal unit test coverage\n"
+    },
+    {
+      "title": "Stage 2: Implement CRUD helper module for jobs and clips",
+      "labels": ["enhancement", "backend", "database", "triage", "help wanted"],
+      "body": "## Goal\nCentralize DB operations in `packages/database/crud.py`.\n\n## Scope\n- Create helper functions: `create_job`, `update_job_status`, `get_clips_by_job`, etc.\n- Keep DB logic out of route handlers\n\n## Acceptance Criteria\n- CRUD operations tested with SQLite\n- API layer can reuse helpers directly\n- No direct SQL scattered in routers\n"
+    },
+    {
+      "title": "Stage 2: Bootstrap FastAPI master app with lifecycle hooks",
+      "labels": ["enhancement", "backend", "triage", "good first issue"],
+      "body": "## Goal\nCreate base app in `services/api/main.py` for Stage 2.\n\n## Scope\n- FastAPI app initialization\n- CORS setup\n- Startup/shutdown hooks\n- Bind rules default to localhost\n\n## Acceptance Criteria\n- App starts without error\n- Health endpoint or startup log exists\n- Router registration pattern established\n"
+    },
+    {
+      "title": "Stage 2: Add jobs router endpoints (create/list/detail/status)",
+      "labels": ["enhancement", "backend", "triage", "help wanted"],
+      "body": "## Goal\nImplement `services/api/routers/jobs.py` endpoints.\n\n## Scope\n- `POST /jobs`\n- `GET /jobs`\n- `GET /jobs/{id}`\n- `GET /jobs/{id}/status`\n\n## Acceptance Criteria\n- Endpoints return typed responses\n- Validation and error handling included\n- Connected to DB layer and queue entry point\n"
+    },
+    {
+      "title": "Stage 2: Add clips router for list and preview metadata",
+      "labels": ["enhancement", "backend", "triage", "good first issue"],
+      "body": "## Goal\nImplement `services/api/routers/clips.py` endpoints.\n\n## Scope\n- `GET /clips/{job_id}`\n- `GET /clips/{id}/preview`\n\n## Acceptance Criteria\n- Response schema defined\n- Missing clip/job handled cleanly\n- Works with DB CRUD helpers\n"
+    },
+    {
+      "title": "Stage 2: Add WebSocket progress channel by job id",
+      "labels": ["enhancement", "backend", "triage", "help wanted"],
+      "body": "## Goal\nImplement realtime progress endpoint in `services/api/routers/ws.py`.\n\n## Scope\n- `ws://localhost:8000/ws/{job_id}`\n- Broadcast stage and progress updates\n- Handle disconnect/reconnect behavior\n\n## Acceptance Criteria\n- Frontend can subscribe per job\n- Message format is documented\n- No server crash on broken connection\n"
+    },
+    {
+      "title": "Stage 2: Add settings router with encrypted API key update",
+      "labels": ["enhancement", "backend", "triage", "help wanted"],
+      "body": "## Goal\nImplement `services/api/routers/settings.py` for app config management.\n\n## Scope\n- `GET /settings`\n- `PUT /settings`\n- `POST /settings/api-key` (encrypted storage)\n\n## Acceptance Criteria\n- Uses existing `ConfigManager`\n- API key is encrypted at rest\n- Validation and error messages are user-friendly\n"
+    },
+    {
+      "title": "Stage 2: Implement in-process JobQueueManager + checkpoint base",
+      "labels": ["enhancement", "backend", "triage", "help wanted"],
+      "body": "## Goal\nCreate queue core in `services/worker/queue_manager.py` and checkpoint skeleton in `services/worker/checkpoint.py`.\n\n## Scope\n- Async queue with concurrency=1 default\n- Enqueue, cancel, reorder primitives\n- Basic checkpoint save/load structure per job\n\n## Acceptance Criteria\n- Queue processes sequentially\n- Checkpoint file path follows project conventions\n- Foundation ready for resume and resource guard integration\n"
+    }
+  ]
+}

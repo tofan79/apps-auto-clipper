@@ -1,0 +1,86 @@
+name: Bootstrap Community
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/bootstrap-community.yml"
+      - ".github/seed/stage2-issues.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Seed labels and Stage 2 issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const path = ".github/seed/stage2-issues.json";
+            const raw = fs.readFileSync(path, "utf8");
+            const seed = JSON.parse(raw);
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            async function upsertLabel(label) {
+              try {
+                await github.rest.issues.getLabel({
+                  owner, repo, name: label.name
+                });
+                await github.rest.issues.updateLabel({
+                  owner, repo,
+                  name: label.name,
+                  new_name: label.name,
+                  color: label.color,
+                  description: label.description
+                });
+                core.info(`Updated label: ${label.name}`);
+              } catch (err) {
+                if (err.status === 404) {
+                  await github.rest.issues.createLabel({
+                    owner, repo,
+                    name: label.name,
+                    color: label.color,
+                    description: label.description
+                  });
+                  core.info(`Created label: ${label.name}`);
+                } else {
+                  throw err;
+                }
+              }
+            }
+
+            async function issueExists(title) {
+              const q = `repo:${owner}/${repo} is:issue "${title}" in:title`;
+              const res = await github.rest.search.issuesAndPullRequests({ q, per_page: 20 });
+              return res.data.items.some((item) => item.title.trim() === title.trim());
+            }
+
+            for (const label of seed.labels) {
+              await upsertLabel(label);
+            }
+
+            for (const issue of seed.issues) {
+              const exists = await issueExists(issue.title);
+              if (exists) {
+                core.info(`Skipped existing issue: ${issue.title}`);
+                continue;
+              }
+              await github.rest.issues.create({
+                owner,
+                repo,
+                title: issue.title,
+                body: issue.body,
+                labels: issue.labels
+              });
+              core.info(`Created issue: ${issue.title}`);
+            }
