@@ -22,11 +22,13 @@ tests/       # Unit and integration tests
 ## Quick Start
 1. Install Node.js 20+ and pnpm 9+
 2. Install Python 3.11+
-3. Install dependencies:
+3. Setup local env file:
+   - copy `.env.dev.example` to `.env`
+4. Install dependencies:
    - `pnpm install`
    - `services/api/.venv/Scripts/python -m pip install -r services/api/requirements.txt`
    - `services/worker/.venv/Scripts/python -m pip install -r services/worker/requirements.txt`
-4. Run dev mode from root:
+5. Run dev mode from root:
    - `pnpm dev`
 
 ## Testing

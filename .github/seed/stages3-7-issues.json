@@ -1,0 +1,181 @@
+{
+  "labels": [
+    {
+      "name": "stage-3",
+      "color": "0366d6",
+      "description": "Roadmap Stage 3 (AI Pipeline Part 1)"
+    },
+    {
+      "name": "stage-4",
+      "color": "0e8a16",
+      "description": "Roadmap Stage 4 (AI Pipeline Part 2)"
+    },
+    {
+      "name": "stage-5",
+      "color": "fbca04",
+      "description": "Roadmap Stage 5 (Frontend/UI)"
+    },
+    {
+      "name": "stage-6",
+      "color": "d4c5f9",
+      "description": "Roadmap Stage 6 (Desktop/Installer)"
+    },
+    {
+      "name": "stage-7",
+      "color": "b60205",
+      "description": "Roadmap Stage 7 (QA/Release)"
+    },
+    {
+      "name": "ai-engine",
+      "color": "5319e7",
+      "description": "AI engine and media processing work"
+    },
+    {
+      "name": "frontend",
+      "color": "1d76db",
+      "description": "Frontend/dashboard and client UX work"
+    },
+    {
+      "name": "desktop",
+      "color": "c2e0c6",
+      "description": "Electron desktop and installer work"
+    },
+    {
+      "name": "qa",
+      "color": "f9d0c4",
+      "description": "Quality assurance and test scenarios"
+    },
+    {
+      "name": "security",
+      "color": "b60205",
+      "description": "Security-related implementation or hardening"
+    }
+  ],
+  "issues": [
+    {
+      "title": "Stage 3: Implement unified InputHandler (YouTube URL + local file)",
+      "labels": ["enhancement", "ai-engine", "stage-3", "triage", "help wanted"],
+      "body": "## Goal\nImplement unified input validation and source type detection.\n\n## Scope\n- Detect and validate YouTube URL vs local file\n- Validate file type/size and path safety\n- Return normalized source object for pipeline\n\n## Acceptance Criteria\n- Invalid input rejected with clear message\n- Valid URL/local path normalized consistently\n- Unit tests added for validation paths\n"
+    },
+    {
+      "title": "Stage 3: Build VideoIngester for YouTube download + audio extraction",
+      "labels": ["enhancement", "ai-engine", "stage-3", "triage", "help wanted"],
+      "body": "## Goal\nImplement YouTube ingestion in `services/ai_engine/ingester.py`.\n\n## Scope\n- Download source video via yt-dlp wrapper\n- Extract WAV audio via FFmpeg\n- Save standardized outputs in job storage\n\n## Acceptance Criteria\n- Produces `source_video.mp4` and `source_audio.wav`\n- Handles download errors safely\n- Logs include URL/job context\n"
+    },
+    {
+      "title": "Stage 3: Add local file ingestion path with consistent storage format",
+      "labels": ["enhancement", "ai-engine", "stage-3", "triage", "good first issue"],
+      "body": "## Goal\nSupport local media input with same output contract as YouTube ingestion.\n\n## Scope\n- Copy or link local file to job directory\n- Extract audio to WAV\n- Keep identical output structure for next stages\n\n## Acceptance Criteria\n- Local `.mp4` input processed without pipeline changes\n- Audio extraction error handling implemented\n"
+    },
+    {
+      "title": "Stage 3: Implement ModelManager for Whisper model lifecycle",
+      "labels": ["enhancement", "ai-engine", "stage-3", "triage", "help wanted"],
+      "body": "## Goal\nManage Whisper model availability and integrity in `packages/config/model_manager.py`.\n\n## Scope\n- Download model if missing\n- Verify checksum/hash\n- Return local model path for transcriber\n\n## Acceptance Criteria\n- Existing valid model is reused\n- Corrupted file is detected and replaced\n- Progress callback supported\n"
+    },
+    {
+      "title": "Stage 3: Implement Transcriber with word-level timestamps",
+      "labels": ["enhancement", "ai-engine", "stage-3", "triage", "help wanted"],
+      "body": "## Goal\nImplement Faster-Whisper transcription wrapper with word-level timing.\n\n## Scope\n- Build `transcriber.py`\n- Generate transcript structure with words + timestamps\n- Integrate device selection from GPU/profile config\n\n## Acceptance Criteria\n- Transcript JSON generated deterministically\n- CPU/GPU fallback path works\n"
+    },
+    {
+      "title": "Stage 3: Add chunked transcription for long videos",
+      "labels": ["enhancement", "ai-engine", "stage-3", "triage", "help wanted"],
+      "body": "## Goal\nSupport memory-safe transcription for long media (up to 2h).\n\n## Scope\n- Split audio into time chunks\n- Transcribe chunk by chunk\n- Offset timestamps and merge outputs\n\n## Acceptance Criteria\n- Long input runs without OOM\n- Merged timestamps remain monotonic and accurate\n"
+    },
+    {
+      "title": "Stage 3: Implement LLM provider abstraction + Ollama provider",
+      "labels": ["enhancement", "ai-engine", "stage-3", "triage", "help wanted"],
+      "body": "## Goal\nCreate provider interface and offline-default Ollama implementation.\n\n## Scope\n- Base provider contract (`generate_hooks`, `generate_metadata`, `health_check`)\n- Ollama provider implementation\n- Factory selector from config\n\n## Acceptance Criteria\n- Provider swap possible without business logic changes\n- Health check endpoint/function implemented\n"
+    },
+    {
+      "title": "Stage 3: Implement ViralHookDetector with multi-signal scoring",
+      "labels": ["enhancement", "ai-engine", "stage-3", "triage", "help wanted"],
+      "body": "## Goal\nBuild hook scoring pipeline combining semantic/speech/keyword signals.\n\n## Scope\n- Speech speed analysis\n- Keyword impact scoring\n- Combined viral score 0-100\n\n## Acceptance Criteria\n- Candidate hooks sorted by score\n- Score range/threshold behavior documented\n"
+    },
+    {
+      "title": "Stage 4: Build FaceAnalyzer and per-segment scene analysis",
+      "labels": ["enhancement", "ai-engine", "stage-4", "triage", "help wanted"],
+      "body": "## Goal\nImplement per-segment face analysis for adaptive framing.\n\n## Scope\n- Face detection sampling strategy\n- Segment-level render mode decision\n- Crop center calculation\n\n## Acceptance Criteria\n- Segment list output is deterministic\n- Works on 1-face and 2-face scenes\n"
+    },
+    {
+      "title": "Stage 4: Add segment merge and anti-flicker smoothing rules",
+      "labels": ["enhancement", "ai-engine", "stage-4", "triage", "good first issue"],
+      "body": "## Goal\nStabilize adaptive decisions between neighboring segments.\n\n## Scope\n- Merge adjacent segments with same mode\n- Remove very short mode switches\n- Apply crop smoothing/damping\n\n## Acceptance Criteria\n- Flicker greatly reduced on rapid scene changes\n- Output segment transitions are stable\n"
+    },
+    {
+      "title": "Stage 4: Implement portrait and landscape blur segment renderer",
+      "labels": ["enhancement", "ai-engine", "stage-4", "triage", "help wanted"],
+      "body": "## Goal\nCreate rendering primitives for portrait crop and landscape blur mode.\n\n## Scope\n- Segment render for portrait path\n- Segment render for landscape blur path\n- Shared FFmpeg command builder utilities\n\n## Acceptance Criteria\n- No black bars in landscape blur output\n- Portrait framing keeps subject centered\n"
+    },
+    {
+      "title": "Stage 4: Implement segment concat and AdaptiveClipRenderer orchestration",
+      "labels": ["enhancement", "ai-engine", "stage-4", "triage", "help wanted"],
+      "body": "## Goal\nBuild orchestration layer for analyze -> render -> concat pipeline.\n\n## Scope\n- Temp segment management\n- Concat final output clip\n- Cleanup strategy for temp artifacts\n\n## Acceptance Criteria\n- Final clip is seamless across segment boundaries\n- Temporary files cleaned after success/failure\n"
+    },
+    {
+      "title": "Stage 4: Add SubtitleGenerator and style presets (ASS karaoke)",
+      "labels": ["enhancement", "ai-engine", "stage-4", "triage", "help wanted"],
+      "body": "## Goal\nGenerate karaoke subtitle `.ass` and embed into render flow.\n\n## Scope\n- Word group strategy and timing tags\n- Style presets module\n- Integrate subtitle path into renderer\n\n## Acceptance Criteria\n- All output clips contain subtitle overlay\n- Presets selectable via settings contract\n"
+    },
+    {
+      "title": "Stage 4: Implement platform metadata generation and smart filename policy",
+      "labels": ["enhancement", "ai-engine", "stage-4", "triage", "good first issue"],
+      "body": "## Goal\nProduce platform-specific caption/hashtag output and export naming.\n\n## Scope\n- Metadata generator contract\n- Per-platform formatting strategy\n- Safe filename sanitizer integration\n\n## Acceptance Criteria\n- Metadata exists for YouTube/TikTok/Instagram/Facebook\n- Export filenames are deterministic and safe\n"
+    },
+    {
+      "title": "Stage 5: Initialize real Next.js frontend foundation (App Router + strict TS)",
+      "labels": ["enhancement", "frontend", "stage-5", "triage", "help wanted"],
+      "body": "## Goal\nReplace placeholders with actual Next.js frontend foundation.\n\n## Scope\n- App Router structure\n- TypeScript strict configuration\n- Base UI layout and providers\n\n## Acceptance Criteria\n- Frontend dev server runs reliably\n- Build passes with strict type checks\n"
+    },
+    {
+      "title": "Stage 5: Add API client layer + TanStack Query + Zustand stores",
+      "labels": ["enhancement", "frontend", "stage-5", "triage", "help wanted"],
+      "body": "## Goal\nCreate robust state/data layer for UI interaction with backend.\n\n## Scope\n- Typed API wrapper\n- Query client provider\n- Stores for jobs/queue/settings\n\n## Acceptance Criteria\n- API errors surfaced with user-friendly messaging\n- Store and query boundaries are clear\n"
+    },
+    {
+      "title": "Stage 5: Implement dashboard + input form with validation",
+      "labels": ["enhancement", "frontend", "stage-5", "triage", "good first issue"],
+      "body": "## Goal\nDeliver usable dashboard and new job input flow.\n\n## Scope\n- Dashboard page skeleton\n- YouTube/local input form\n- Validation and submit UX states\n\n## Acceptance Criteria\n- Invalid input blocked with clear feedback\n- Valid submission triggers job create flow\n"
+    },
+    {
+      "title": "Stage 5: Implement queue panel and real-time progress subscription",
+      "labels": ["enhancement", "frontend", "stage-5", "triage", "help wanted"],
+      "body": "## Goal\nProvide queue visibility and progress updates in UI.\n\n## Scope\n- Queue panel component\n- WebSocket progress hook integration\n- Cancel/reorder affordances (if backend ready)\n\n## Acceptance Criteria\n- Active and pending jobs visible\n- Progress updates without polling\n"
+    },
+    {
+      "title": "Stage 5: Implement clip grid, preview modal, and download manager panel",
+      "labels": ["enhancement", "frontend", "stage-5", "triage", "help wanted"],
+      "body": "## Goal\nShip core clip consumption experience for end users.\n\n## Scope\n- Thumbnail grid with selection state\n- Preview modal with metadata tabs\n- Background download manager UI\n\n## Acceptance Criteria\n- User can preview and select clips\n- Background download does not freeze UI\n"
+    },
+    {
+      "title": "Stage 6: Build Electron main/preload with secure IPC whitelist",
+      "labels": ["enhancement", "desktop", "stage-6", "security", "triage", "help wanted"],
+      "body": "## Goal\nImplement secure desktop shell baseline.\n\n## Scope\n- Main process window lifecycle\n- Preload bridge with explicit whitelist\n- IPC handlers for file/folder and notifications\n\n## Acceptance Criteria\n- `contextIsolation` and sandbox hardening enabled\n- Renderer has no direct Node access\n"
+    },
+    {
+      "title": "Stage 6: Integrate backend process lifecycle with desktop app",
+      "labels": ["enhancement", "desktop", "stage-6", "triage", "help wanted"],
+      "body": "## Goal\nRun API/backend as managed subprocess from Electron shell.\n\n## Scope\n- Start backend on app launch\n- Graceful shutdown on app close\n- Log process lifecycle and failures\n\n## Acceptance Criteria\n- Backend starts/stops reliably with app state\n- No orphan process after exit\n"
+    },
+    {
+      "title": "Stage 6: Implement installer build config and first-run setup flow",
+      "labels": ["enhancement", "desktop", "stage-6", "triage", "help wanted"],
+      "body": "## Goal\nPrepare install/distribution baseline and onboarding setup.\n\n## Scope\n- Electron Builder config\n- Installer assets/scripts baseline\n- First-run checks (GPU, FFmpeg, model readiness)\n\n## Acceptance Criteria\n- Build artifact generated in CI/local build path\n- First-run progress surface defined and usable\n"
+    },
+    {
+      "title": "Stage 7: Perform security hardening audit and path traversal tests",
+      "labels": ["enhancement", "qa", "security", "stage-7", "triage", "help wanted"],
+      "body": "## Goal\nValidate security baseline before release readiness.\n\n## Scope\n- Path traversal negative tests\n- Input sanitization abuse tests\n- Electron hardening verification checklist\n\n## Acceptance Criteria\n- Critical security checks pass\n- Findings documented with remediation tasks\n"
+    },
+    {
+      "title": "Stage 7: Build integration test matrix for real-world workloads",
+      "labels": ["enhancement", "qa", "stage-7", "triage", "help wanted"],
+      "body": "## Goal\nCreate repeatable test matrix for release confidence.\n\n## Scope\n- 30-minute and 2-hour scenario tests\n- Queue behavior with multiple jobs\n- Crash recovery / checkpoint resume scenario\n\n## Acceptance Criteria\n- Test scripts/checklists documented\n- Results tracked in issue comments or report\n"
+    },
+    {
+      "title": "Stage 7: Final release checklist issue (v1.0.0 readiness gate)",
+      "labels": ["enhancement", "qa", "stage-7", "triage"],
+      "body": "## Goal\nTrack release readiness in one master issue.\n\n## Scope\n- Link all blocking issues\n- Validate installer, update flow, and docs\n- Confirm output quality and stability targets\n\n## Acceptance Criteria\n- All blocker tasks closed or formally deferred\n- Release note draft and version tag plan ready\n"
+    }
+  ]
+}

@@ -23,7 +23,7 @@ venv/
 # Env and secrets
 .env
 .env.*
-!.env.example
+!.env.dev.example
 *.key
 *.pem
 *.crt
@@ -42,7 +42,3 @@ logs/
 Thumbs.db
 .idea/
 .vscode/
-
-# Private planning docs (must not be pushed)
-AutoClipper_BuildPlan.md
-AutoClipper_MASTER_FINAL.md

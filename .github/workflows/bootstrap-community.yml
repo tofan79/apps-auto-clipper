@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/bootstrap-community.yml"
-      - ".github/seed/stage2-issues.json"
+      - ".github/seed/**"
   workflow_dispatch:
 
 permissions:
@@ -24,9 +24,21 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const path = ".github/seed/stage2-issues.json";
-            const raw = fs.readFileSync(path, "utf8");
-            const seed = JSON.parse(raw);
+            const seedDir = ".github/seed";
+            const files = fs.readdirSync(seedDir).filter((f) => f.endsWith(".json"));
+
+            const labelsByName = new Map();
+            const issues = [];
+            for (const file of files) {
+              const raw = fs.readFileSync(`${seedDir}/${file}`, "utf8");
+              const seed = JSON.parse(raw);
+              for (const label of (seed.labels || [])) {
+                labelsByName.set(label.name, label);
+              }
+              for (const issue of (seed.issues || [])) {
+                issues.push(issue);
+              }
+            }
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;
@@ -65,11 +77,11 @@ jobs:
               return res.data.items.some((item) => item.title.trim() === title.trim());
             }
 
-            for (const label of seed.labels) {
+            for (const label of labelsByName.values()) {
               await upsertLabel(label);
             }
 
-            for (const issue of seed.issues) {
+            for (const issue of issues) {
               const exists = await issueExists(issue.title);
               if (exists) {
                 core.info(`Skipped existing issue: ${issue.title}`);
