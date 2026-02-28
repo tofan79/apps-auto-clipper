@@ -9,6 +9,8 @@ Desktop-first AI clip generator for turning long-form video into short-form soci
 ## Public Blueprint
 - Product direction and expected output: [App Specification](docs/app_spec.md)
 - Engineering rules and constraints: [Engineering Standards](docs/engineering_standards.md)
+- Contributor onboarding: [Contributor Start Here](docs/contributor_start_here.md)
+- Maintainer operations: [Maintainer Operations](docs/maintainer_ops.md)
 - Repo admin setup: [Repository Admin Setup](docs/repo_admin_setup.md)
 
 ## Project Structure

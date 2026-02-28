@@ -72,7 +72,7 @@ jobs:
             }
 
             async function fetchExistingIssueTitles() {
-              const titles = new Set();
+              const issuesByTitle = new Map();
               let page = 1;
               while (true) {
                 const res = await github.rest.issues.listForRepo({
@@ -87,7 +87,7 @@ jobs:
                 }
                 for (const item of res.data) {
                   if (!item.pull_request) {
-                    titles.add(item.title.trim());
+                    issuesByTitle.set(item.title.trim(), item);
                   }
                 }
                 if (res.data.length < 100) {
@@ -95,28 +95,40 @@ jobs:
                 }
                 page += 1;
               }
-              return titles;
+              return issuesByTitle;
             }
 
             for (const label of labelsByName.values()) {
               await upsertLabel(label);
             }
 
-            const existingTitles = await fetchExistingIssueTitles();
+            const existingIssues = await fetchExistingIssueTitles();
 
             for (const issue of issues) {
               const normalizedTitle = issue.title.trim();
-              if (existingTitles.has(normalizedTitle)) {
-                core.info(`Skipped existing issue: ${issue.title}`);
+              if (existingIssues.has(normalizedTitle)) {
+                const existing = existingIssues.get(normalizedTitle);
+                const currentLabels = (existing.labels || []).map((l) =>
+                  typeof l === "string" ? l : l.name
+                );
+                const mergedLabels = [...new Set([...currentLabels, ...(issue.labels || [])])];
+
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: existing.number,
+                  labels: mergedLabels
+                });
+                core.info(`Synced labels for existing issue: ${issue.title}`);
                 continue;
               }
-              await github.rest.issues.create({
+              const created = await github.rest.issues.create({
                 owner,
                 repo,
                 title: issue.title,
                 body: issue.body,
                 labels: issue.labels
               });
-              existingTitles.add(normalizedTitle);
+              existingIssues.set(normalizedTitle, created.data);
               core.info(`Created issue: ${issue.title}`);
             }

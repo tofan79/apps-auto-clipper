@@ -1,0 +1,36 @@
+name: RFC / Proposal
+description: Propose architectural or product-level changes
+title: "[RFC] "
+labels: ["triage", "enhancement"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What problem are we solving and why now?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the proposed design/change
+    validations:
+      required: true
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Trade-offs
+      description: Risks, alternatives, and implications
+    validations:
+      required: true
+  - type: textarea
+    id: rollout
+    attributes:
+      label: Rollout Plan
+      description: Migration or rollout steps
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation Plan
+      description: How this change should be tested and measured

@@ -1,0 +1,38 @@
+name: Task
+description: Engineering implementation task
+title: "[Task] "
+labels: ["triage"]
+body:
+  - type: input
+    id: stage
+    attributes:
+      label: Roadmap Stage
+      description: Example: stage-2 / stage-3 / stage-4
+      placeholder: stage-2
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: What needs to be delivered?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Explicitly list in-scope changes
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: How do we verify this is done?
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Extra Notes

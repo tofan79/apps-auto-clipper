@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Discussions (Q&A / Ideas)
+    url: https://github.com/tofan79/apps-auto-clipper/discussions
+    about: Use Discussions for general questions and ideas.
   - name: Security Disclosure
     url: https://github.com/tofan79/apps-auto-clipper/security/advisories/new
     about: Please report vulnerabilities privately.

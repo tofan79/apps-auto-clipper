@@ -12,6 +12,7 @@ Thanks for contributing to AutoClipper AI.
 ## Required Reading Before Coding
 - `docs/app_spec.md`
 - `docs/engineering_standards.md`
+- `docs/contributor_start_here.md`
 - `SECURITY.md`
 
 ## Branch Naming

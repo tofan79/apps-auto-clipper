@@ -25,4 +25,35 @@ Pilih:
 
 Hasil yang diharapkan:
 - Label standar otomatis terbuat/ter-update
-- 10 issue awal Stage 2 otomatis dibuat jika belum ada
+- Roadmap issues Stage 2 sampai Stage 7 otomatis dibuat jika belum ada
+
+## 4. Branch Protection untuk `main`
+Path: `Settings -> Branches -> Add branch protection rule`
+
+Rekomendasi minimum:
+- Require pull request before merge
+- Require 1 approval
+- Require status checks to pass
+- Block force pushes
+
+## 5. Aktifkan Discussions Categories
+Path: `Discussions -> Categories`
+
+Buat kategori:
+- Announcements
+- Q&A
+- Ideas
+- Show and Tell
+
+## 6. Milestones dan Project Board
+- Buat milestone per stage roadmap (Stage 2 ... Stage 7)
+- Buat project board sederhana:
+  - Backlog
+  - Ready
+  - In Progress
+  - Review
+  - Done
+
+## 7. Security Hygiene
+- Rotate credential yang pernah terpapar
+- Pastikan tidak ada secret real di history commit berikutnya
