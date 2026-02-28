@@ -41,10 +41,6 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR.
 ## Maintainer
 - [@tofan79](https://github.com/tofan79)
 
-## Donation
-- GitHub Sponsors: https://github.com/sponsors/tofan79
-- Saweria: https://saweria.co/tofan79
-
 ## Security
 Please report vulnerabilities via [SECURITY.md](SECURITY.md), not public issues.
 
