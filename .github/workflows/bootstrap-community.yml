@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Seed labels and Stage 2 issues
+      - name: Seed labels and roadmap issues
         uses: actions/github-script@v7
         with:
           script: |
@@ -71,19 +71,42 @@ jobs:
               }
             }
 
-            async function issueExists(title) {
-              const q = `repo:${owner}/${repo} is:issue "${title}" in:title`;
-              const res = await github.rest.search.issuesAndPullRequests({ q, per_page: 20 });
-              return res.data.items.some((item) => item.title.trim() === title.trim());
+            async function fetchExistingIssueTitles() {
+              const titles = new Set();
+              let page = 1;
+              while (true) {
+                const res = await github.rest.issues.listForRepo({
+                  owner,
+                  repo,
+                  state: "all",
+                  per_page: 100,
+                  page
+                });
+                if (res.data.length === 0) {
+                  break;
+                }
+                for (const item of res.data) {
+                  if (!item.pull_request) {
+                    titles.add(item.title.trim());
+                  }
+                }
+                if (res.data.length < 100) {
+                  break;
+                }
+                page += 1;
+              }
+              return titles;
             }
 
             for (const label of labelsByName.values()) {
               await upsertLabel(label);
             }
 
+            const existingTitles = await fetchExistingIssueTitles();
+
             for (const issue of issues) {
-              const exists = await issueExists(issue.title);
-              if (exists) {
+              const normalizedTitle = issue.title.trim();
+              if (existingTitles.has(normalizedTitle)) {
                 core.info(`Skipped existing issue: ${issue.title}`);
                 continue;
               }
@@ -94,5 +117,6 @@ jobs:
                 body: issue.body,
                 labels: issue.labels
               });
+              existingTitles.add(normalizedTitle);
               core.info(`Created issue: ${issue.title}`);
             }
