@@ -11,7 +11,10 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
+try:
+    import uvicorn
+except ModuleNotFoundError:
+    uvicorn = None  # type: ignore[assignment]
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -302,6 +305,8 @@ async def health() -> HealthResponse:
 
 
 def main() -> None:
+    if uvicorn is None:
+        raise RuntimeError("uvicorn is required to run API service. Install services/api/requirements.txt first.")
     uvicorn.run("services.api.main:app", host="127.0.0.1", port=8000, reload=False)
 
 
