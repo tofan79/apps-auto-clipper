@@ -1,4 +1,6 @@
 from __future__ import annotations
+# pylint: disable=wrong-import-position
+# ruff: noqa: E402
 
 import sys
 from pathlib import Path
