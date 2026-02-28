@@ -9,6 +9,11 @@ Thanks for contributing to AutoClipper AI.
 4. Add/update tests
 5. Open a Pull Request
 
+## Required Reading Before Coding
+- `docs/app_spec.md`
+- `docs/engineering_standards.md`
+- `SECURITY.md`
+
 ## Branch Naming
 - `feat/<short-description>`
 - `fix/<short-description>`

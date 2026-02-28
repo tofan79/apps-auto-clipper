@@ -6,6 +6,10 @@ Desktop-first AI clip generator for turning long-form video into short-form soci
 - Current stage: Foundation completed (Stage 1)
 - Stack: Python services + Node monorepo (pnpm + turbo)
 
+## Public Blueprint
+- Product direction and expected output: [App Specification](docs/app_spec.md)
+- Engineering rules and constraints: [Engineering Standards](docs/engineering_standards.md)
+
 ## Project Structure
 ```text
 apps/        # Frontend + desktop shell
