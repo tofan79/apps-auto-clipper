@@ -23,7 +23,7 @@ jobs:
       cancel-in-progress: false
     steps:
       - name: Assign milestones from stage labels
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const owner = context.repo.owner;
