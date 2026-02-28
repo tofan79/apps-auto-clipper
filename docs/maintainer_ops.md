@@ -23,6 +23,19 @@ Aktifkan:
 - Gunakan label `triage` untuk issue baru
 - Set milestone per tahap roadmap
 - Gunakan project board untuk status delivery
+- Pastikan PR mengisi `Closes #<issue>` agar issue auto-close saat merge
+
+## 3.1 Automation (Issue, Milestone, Project)
+- Workflow `sync-roadmap-milestones.yml`:
+  - Sync milestone berdasarkan label `stage-*`
+- Workflow `auto-manage-milestones.yml`:
+  - Auto-close milestone jika semua issue di milestone sudah closed
+  - Auto-reopen milestone jika ada issue open lagi
+- Workflow `sync-project-status.yml`:
+  - Saat issue `opened/reopened/closed`, field `Status` di GitHub Project v2 akan di-update otomatis
+  - Mapping default:
+    - issue open/reopen -> `Backlog`/`Todo`/`To do`/`Ready`/`In Progress` (opsi pertama yang tersedia)
+    - issue closed -> `Done`/`Closed`
 
 ## 4. Discussions Setup
 - Kategori minimal:
