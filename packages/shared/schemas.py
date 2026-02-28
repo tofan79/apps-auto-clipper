@@ -9,6 +9,7 @@ class AppConfig:
     AI_MODE: str = "offline"
     LLM_PROVIDER: str = "ollama"
     OLLAMA_MODEL: str = "llama3.2:3b"
+    OPENROUTER_MODEL: str = "openrouter/auto"
     WHISPER_MODEL: str = "small"
     WHISPER_DEVICE: str = "auto"
     MAX_CLIPS: int = 10

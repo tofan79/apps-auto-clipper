@@ -11,6 +11,8 @@ Panduan singkat untuk kontribusi pertama.
 
 ## 2. Setup Lokal
 1. Copy `.env.dev.example` menjadi `.env`
+   - perangkat low-spec: pakai `LLM_PROVIDER=openrouter`
+   - isi `OPENROUTER_API_KEY` dan opsional `OPENROUTER_MODEL`
 2. Install dependency:
    - `pnpm install`
    - `services/api/.venv/Scripts/python -m pip install -r services/api/requirements.txt`

@@ -7,6 +7,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "AI_MODE": "offline",
     "LLM_PROVIDER": "ollama",
     "OLLAMA_MODEL": "llama3.2:3b",
+    "OPENROUTER_MODEL": "openrouter/auto",
     "WHISPER_MODEL": "small",
     "WHISPER_DEVICE": "auto",
     "MAX_CLIPS": 10,
