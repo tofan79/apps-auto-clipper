@@ -26,6 +26,8 @@ tests/       # Unit and integration tests
 2. Install Python 3.11+
 3. Setup local env file:
    - copy `.env.dev.example` to `.env`
+   - set `LLM_PROVIDER=openrouter` and fill `OPENROUTER_API_KEY`
+   - optional: set `OPENROUTER_MODEL` (default: `openrouter/auto`)
 4. Install dependencies:
    - `pnpm install`
    - `services/api/.venv/Scripts/python -m pip install -r services/api/requirements.txt`
