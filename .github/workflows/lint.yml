@@ -18,16 +18,17 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+      - name: Setup pnpm (corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.0.0 --activate
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Run workspace lint scripts
-        run: pnpm -r run lint --if-present
+        run: pnpm -r --if-present run lint
 
   py-quality:
     runs-on: ubuntu-latest
