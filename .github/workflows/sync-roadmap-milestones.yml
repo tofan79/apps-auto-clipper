@@ -1,0 +1,98 @@
+name: Sync Roadmap Milestones
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sync-roadmap-milestones.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign milestones from stage labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const stageToMilestoneTitle = {
+              "stage-2": "Stage 2 - Core Backend & DB",
+              "stage-3": "Stage 3 - AI Pipeline Part 1",
+              "stage-4": "Stage 4 - AI Pipeline Part 2",
+              "stage-5": "Stage 5 - Frontend & UI",
+              "stage-6": "Stage 6 - Desktop & Installer",
+              "stage-7": "Stage 7 - QA & Release"
+            };
+
+            // Build milestone map (title -> number)
+            const milestoneMap = new Map();
+            let milestonePage = 1;
+            while (true) {
+              const res = await github.rest.issues.listMilestones({
+                owner,
+                repo,
+                state: "all",
+                per_page: 100,
+                page: milestonePage
+              });
+              if (res.data.length === 0) break;
+              for (const m of res.data) {
+                milestoneMap.set(m.title, m.number);
+              }
+              if (res.data.length < 100) break;
+              milestonePage += 1;
+            }
+
+            let page = 1;
+            let updatedCount = 0;
+            let checkedCount = 0;
+            while (true) {
+              const res = await github.rest.issues.listForRepo({
+                owner,
+                repo,
+                state: "open",
+                per_page: 100,
+                page
+              });
+              if (res.data.length === 0) break;
+
+              for (const issue of res.data) {
+                if (issue.pull_request) continue;
+                checkedCount += 1;
+
+                const labels = (issue.labels || []).map((l) => typeof l === "string" ? l : l.name);
+                const stageLabel = Object.keys(stageToMilestoneTitle).find((key) => labels.includes(key));
+                if (!stageLabel) continue;
+
+                const milestoneTitle = stageToMilestoneTitle[stageLabel];
+                const targetMilestone = milestoneMap.get(milestoneTitle);
+                if (!targetMilestone) {
+                  core.warning(`Milestone not found: ${milestoneTitle} (issue #${issue.number})`);
+                  continue;
+                }
+
+                const currentMilestone = issue.milestone ? issue.milestone.number : null;
+                if (currentMilestone === targetMilestone) continue;
+
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: issue.number,
+                  milestone: targetMilestone
+                });
+                updatedCount += 1;
+                core.info(`Updated issue #${issue.number} -> milestone ${milestoneTitle}`);
+              }
+
+              if (res.data.length < 100) break;
+              page += 1;
+            }
+
+            core.notice(`Checked ${checkedCount} issues. Updated ${updatedCount} milestones.`);
