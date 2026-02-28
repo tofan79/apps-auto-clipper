@@ -1,5 +1,7 @@
 # Node / pnpm / turbo
 node_modules/
+.next/
+.vercel/
 .pnpm-store/
 .turbo/
 .pnpm-home/
