@@ -1,0 +1,111 @@
+name: Auto Manage Milestones
+
+on:
+  issues:
+    types: [opened, reopened, closed, milestoned, demilestoned]
+  schedule:
+    - cron: "23 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync-milestone-state:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: auto-manage-milestones
+      cancel-in-progress: false
+    steps:
+      - name: Close/reopen milestones based on open issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            async function listOpenIssueCount(milestoneNumber) {
+              let page = 1;
+              let count = 0;
+              while (true) {
+                const res = await github.rest.issues.listForRepo({
+                  owner,
+                  repo,
+                  state: "open",
+                  milestone: String(milestoneNumber),
+                  per_page: 100,
+                  page
+                });
+                const issuesOnly = res.data.filter((item) => !item.pull_request);
+                count += issuesOnly.length;
+                if (res.data.length < 100) break;
+                page += 1;
+              }
+              return count;
+            }
+
+            async function syncMilestone(milestone) {
+              const openCount = await listOpenIssueCount(milestone.number);
+              if (openCount === 0 && milestone.state === "open") {
+                await github.rest.issues.updateMilestone({
+                  owner,
+                  repo,
+                  milestone_number: milestone.number,
+                  state: "closed"
+                });
+                core.notice(`Closed milestone #${milestone.number} (${milestone.title})`);
+                return;
+              }
+              if (openCount > 0 && milestone.state === "closed") {
+                await github.rest.issues.updateMilestone({
+                  owner,
+                  repo,
+                  milestone_number: milestone.number,
+                  state: "open"
+                });
+                core.notice(`Re-opened milestone #${milestone.number} (${milestone.title})`);
+              }
+            }
+
+            const milestoneNumbers = new Set();
+            if (context.eventName === "issues") {
+              const issue = context.payload.issue;
+              if (issue?.milestone?.number) {
+                milestoneNumbers.add(issue.milestone.number);
+              }
+            }
+
+            let milestones = [];
+            if (milestoneNumbers.size > 0) {
+              for (const milestoneNumber of milestoneNumbers) {
+                const openMilestone = await github.rest.issues.getMilestone({
+                  owner,
+                  repo,
+                  milestone_number: milestoneNumber
+                });
+                milestones.push(openMilestone.data);
+              }
+            } else {
+              // Scheduled/manual fallback: re-check all stage milestones.
+              let page = 1;
+              while (true) {
+                const res = await github.rest.issues.listMilestones({
+                  owner,
+                  repo,
+                  state: "all",
+                  per_page: 100,
+                  page
+                });
+                if (res.data.length === 0) break;
+                milestones = milestones.concat(
+                  res.data.filter((m) => m.title.startsWith("Stage "))
+                );
+                if (res.data.length < 100) break;
+                page += 1;
+              }
+            }
+
+            for (const milestone of milestones) {
+              await syncMilestone(milestone);
+            }

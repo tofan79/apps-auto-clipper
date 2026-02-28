@@ -16,4 +16,5 @@
 - [ ] No secret/local files included
 
 ## Related Issues
-Closes #
+- Closes #<issue-number>
+- Milestone/Project status akan auto-sync saat issue di-close.

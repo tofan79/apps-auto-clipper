@@ -1,0 +1,142 @@
+name: Sync Project Status
+
+on:
+  issues:
+    types: [opened, reopened, closed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+  repository-projects: write
+
+jobs:
+  sync-status:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: sync-project-status
+      cancel-in-progress: false
+    steps:
+      - name: Update project item status from issue state
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            if (context.eventName !== "issues") {
+              core.notice("No issue payload in this event. Skipping.");
+              return;
+            }
+
+            const issueNumber = context.payload.issue.number;
+            const query = `
+              query($owner: String!, $repo: String!, $number: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  issue(number: $number) {
+                    state
+                    projectItems(first: 50) {
+                      nodes {
+                        id
+                        project {
+                          ... on ProjectV2 {
+                            id
+                            title
+                            fields(first: 50) {
+                              nodes {
+                                ... on ProjectV2SingleSelectField {
+                                  id
+                                  name
+                                  options {
+                                    id
+                                    name
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+
+            const data = await github.graphql(query, {
+              owner,
+              repo,
+              number: issueNumber
+            });
+
+            const issue = data.repository?.issue;
+            if (!issue) {
+              core.warning(`Issue #${issueNumber} not found.`);
+              return;
+            }
+
+            const isClosed = issue.state === "CLOSED";
+            const targetNames = isClosed
+              ? ["Done", "Closed"]
+              : ["Backlog", "Todo", "To do", "Ready", "In Progress"];
+
+            let updated = 0;
+            for (const item of issue.projectItems.nodes || []) {
+              const project = item.project;
+              if (!project) continue;
+
+              const fields = (project.fields?.nodes || []).filter(Boolean);
+              const statusField = fields.find(
+                (f) => (f.name || "").toLowerCase() === "status"
+              );
+              if (!statusField) {
+                core.warning(`Project "${project.title}" has no "Status" single-select field.`);
+                continue;
+              }
+
+              const option = (statusField.options || []).find((opt) =>
+                targetNames.includes(opt.name)
+              );
+              if (!option) {
+                core.warning(
+                  `Project "${project.title}" has no matching status option for state ${issue.state}.`
+                );
+                continue;
+              }
+
+              await github.graphql(
+                `
+                  mutation(
+                    $projectId: ID!,
+                    $itemId: ID!,
+                    $fieldId: ID!,
+                    $optionId: String!
+                  ) {
+                    updateProjectV2ItemFieldValue(
+                      input: {
+                        projectId: $projectId
+                        itemId: $itemId
+                        fieldId: $fieldId
+                        value: { singleSelectOptionId: $optionId }
+                      }
+                    ) {
+                      projectV2Item {
+                        id
+                      }
+                    }
+                  }
+                `,
+                {
+                  projectId: project.id,
+                  itemId: item.id,
+                  fieldId: statusField.id,
+                  optionId: option.id
+                }
+              );
+              updated += 1;
+              core.notice(
+                `Updated project "${project.title}" item for issue #${issueNumber} -> ${option.name}`
+              );
+            }
+
+            core.notice(`Updated ${updated} project item(s) for issue #${issueNumber}.`);
