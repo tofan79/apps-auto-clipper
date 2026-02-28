@@ -27,7 +27,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run workspace lint scripts
-        run: pnpm -r run lint --if-present
+        run: pnpm -r --if-present run lint
 
   py-quality:
     runs-on: ubuntu-latest
