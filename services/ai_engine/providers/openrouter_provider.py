@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from services.ai_engine.providers.base import BaseLLMProvider
@@ -34,7 +34,7 @@ def _extract_json_payload(raw_text: str) -> Any:
 @dataclass(slots=True)
 class OpenRouterProvider(BaseLLMProvider):
     model: str
-    api_key: str
+    api_key: str = field(repr=False)
     base_url: str = "https://openrouter.ai/api/v1"
 
     def health_check(self) -> bool:
