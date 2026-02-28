@@ -13,8 +13,12 @@ from packages.config.bootstrap import init_service_runtime
 from packages.config.model_manager import ModelManager
 from packages.config.gpu_detector import get_whisper_device
 from packages.config.logging_setup import get_logger
+from services.ai_engine.adaptive_renderer import AdaptiveClipRenderer
+from services.ai_engine.face_analyzer import FaceAnalyzer
 from services.ai_engine.input_handler import InputHandler
+from services.ai_engine.metadata_generator import PlatformMetadataGenerator
 from services.ai_engine.providers.factory import build_llm_provider
+from services.ai_engine.subtitle_generator import SubtitleGenerator
 from services.ai_engine.transcriber import Transcriber
 
 
@@ -29,6 +33,10 @@ def main() -> None:
         device=config.WHISPER_DEVICE,
         chunk_duration_sec=state.profile.chunk_duration,
     )
+    face_analyzer = FaceAnalyzer()
+    renderer = AdaptiveClipRenderer()
+    subtitle_generator = SubtitleGenerator()
+    metadata_generator = PlatformMetadataGenerator()
     model_manager = ModelManager.from_runtime()
 
     provider_health = "unavailable"
@@ -46,9 +54,14 @@ def main() -> None:
         provider_health,
     )
     logger.debug(
-        "Stage 3 components ready | input_handler=%s transcriber_model=%s model_root=%s",
+        "Stage 4 components ready | input_handler=%s transcriber_model=%s face_analyzer=%s renderer=%s "
+        "subtitle_generator=%s metadata_generator=%s model_root=%s",
         input_handler.__class__.__name__,
         transcriber.model_name,
+        face_analyzer.__class__.__name__,
+        renderer.__class__.__name__,
+        subtitle_generator.__class__.__name__,
+        metadata_generator.__class__.__name__,
         model_manager.model_root,
     )
 
