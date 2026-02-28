@@ -1,0 +1,48 @@
+# Node / pnpm / turbo
+node_modules/
+.pnpm-store/
+.turbo/
+.pnpm-home/
+.tmp-pnpm/
+.localapp/
+.appdata/
+dist/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.crt
+*.p12
+
+# Runtime data
+storage/
+logs/
+.autoclipper-runtime/
+*.log
+*.sqlite
+*.db
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Private planning docs (must not be pushed)
+AutoClipper_BuildPlan.md
+AutoClipper_MASTER_FINAL.md

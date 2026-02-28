@@ -1,0 +1,11 @@
+{
+  "name": "@autoclipper/ai-engine",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "python main.py",
+    "build": "node -e \"console.log('ai-engine build placeholder')\"",
+    "lint": "node -e \"console.log('ai-engine lint placeholder')\"",
+    "test": "node -e \"console.log('ai-engine test placeholder')\""
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@autoclipper/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node -e \"console.log('desktop dev placeholder')\"",
+    "build": "node -e \"console.log('desktop build placeholder')\"",
+    "lint": "node -e \"console.log('desktop lint placeholder')\"",
+    "test": "node -e \"console.log('desktop test placeholder')\""
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@autoclipper/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node -e \"console.log('web dev placeholder')\"",
+    "build": "node -e \"console.log('web build placeholder')\"",
+    "lint": "node -e \"console.log('web lint placeholder')\"",
+    "test": "node -e \"console.log('web test placeholder')\""
+  }
+}

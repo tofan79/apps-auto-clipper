@@ -1,0 +1,11 @@
+{
+  "name": "@autoclipper/worker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "python main.py",
+    "build": "node -e \"console.log('worker build placeholder')\"",
+    "lint": "node -e \"console.log('worker lint placeholder')\"",
+    "test": "node -e \"console.log('worker test placeholder')\""
+  }
+}

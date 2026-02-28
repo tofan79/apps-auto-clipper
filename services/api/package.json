@@ -1,0 +1,11 @@
+{
+  "name": "@autoclipper/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "python main.py",
+    "build": "node -e \"console.log('api build placeholder')\"",
+    "lint": "node -e \"console.log('api lint placeholder')\"",
+    "test": "node -e \"console.log('api test placeholder')\""
+  }
+}
